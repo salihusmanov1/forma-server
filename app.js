@@ -5,7 +5,10 @@ const corsConfig = require('./config/cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes')
-const db = require('./models')
+const templateRoutes = require('./routes/templateRoutes')
+const db = require('./models');
+const CustomError = require('./utils/customError');
+const globalErrorController = require('./controller/errorController');
 require('dotenv').config();
 
 app.use(morgan('dev'))
@@ -14,21 +17,15 @@ app.use(cors(corsConfig));
 app.use(cookieParser());
 
 app.use('/auth', authRoutes)
+app.use('/api', templateRoutes)
 
 app.use((req, res, next) => {
-  const error = new Error('Not Found')
-  error.status = 404;
+  const error = new CustomError('Not Found', 404)
   next(error)
 })
 
-app.use((error, req, res, next) => {
-  res.status(error.status || 500)
-  res.json({
-    error: {
-      message: error.message
-    }
-  })
-})
+app.use(globalErrorController)
+
 
 db.sequelize.sync().then(() => {
   app.listen(process.env.PORT, () => {

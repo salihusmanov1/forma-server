@@ -19,10 +19,33 @@ module.exports = (sequelize, DataTypes) => {
     template_name: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Template name cannot be empty.",
+        },
+      },
     },
     template_description: {
       type: DataTypes.TEXT,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Template description cannot be empty.",
+        },
+      },
+    },
+    image_url: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    topic_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        notEmpty: {
+          msg: "Template topic is required.",
+        },
+      },
     },
   },
     {

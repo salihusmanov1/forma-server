@@ -9,15 +9,37 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Name is required",
+        },
+      },
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: { msg: "This email is already in use" },
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Email is required.",
+        },
+        isEmail: {
+          msg: 'Email must be a valid email address',
+        },
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Password is required.",
+        },
+        len: {
+          args: [6, 100],
+          msg: 'Password must be at least 8 characters long',
+        },
+      },
     },
     role: {
       type: DataTypes.ENUM('user', 'admin'),

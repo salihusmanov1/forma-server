@@ -34,6 +34,10 @@ const getUniqeKeyError = (error) => {
   return new CustomError(error.errors[0].message, 409)
 }
 
+const getTokenError = () => {
+  return new CustomError("Unauthenticated", 401)
+}
+
 module.exports = (error, req, res, next) => {
   error.statusCode = error.statusCode || 500
   error.status = error.status || 'error'
@@ -43,6 +47,7 @@ module.exports = (error, req, res, next) => {
   } else if (process.env.NODE_ENV === "production") {
     if (error.name === "SequelizeValidationError") error = getValidationError(error)
     else if (error.name === "SequelizeUniqueConstraintError") error = getUniqeKeyError(error)
+    else if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") error = getTokenError()
     createProdError(error, res)
   }
 }

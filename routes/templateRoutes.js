@@ -1,9 +1,10 @@
 const express = require("express");
-const { createTemplate } = require("../controller/templateController");
+const { createTemplate, getTemplates } = require("../controller/templateController");
 const protect = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.post("/template-create", protect, createTemplate);
-
+router.route("/templates")
+  .post(protect, createTemplate)
+  .get(protect, getTemplates);
 
 module.exports = router;

@@ -8,7 +8,6 @@ const protect = asyncErrorHandler(async (req, res, next) => {
   const token = req.cookies.jwt
   if (!token)
     return next(new CustomError("Authentication token is missing", 401))
-
   const decodedToken = await util.promisify(jwt.verify)(token, process.env.JWT_SECRET)
   const user = await Users.findOne({ where: { id: decodedToken.userId } })
   if (!user)

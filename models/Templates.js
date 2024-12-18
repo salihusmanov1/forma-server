@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   )
   Templates.associate = (models) => {
-    Templates.belongsTo(models.Users, { foreignKey: "author_id" });
+    Templates.belongsTo(models.Users, { foreignKey: "author_id", as: 'author' });
   };
   return Templates
 

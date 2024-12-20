@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 
 app.use(globalErrorController)
 
-
 db.sequelize.sync().then(() => {
   app.listen(process.env.PORT, () => {
     console.log(`Server is running on ${process.env.APP_URL}:${process.env.PORT}`);

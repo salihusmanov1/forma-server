@@ -1,11 +1,13 @@
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { Templates } = require("../models");
-const { Users } = require("../models");
+const { Templates, Questions, Users } = require("../models");;
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const s3 = require("../config/aws");
 const resizeTemlateImage = require("../utils/imageResizer");
 
 const createTemplate = asyncErrorHandler(async (req, res, next) => {
+  let data = req.body
+  data.questions = JSON.parse(req.body.questions);
+
   let objUrl = null;
   if (req.file) {
     const buffer = await resizeTemlateImage(req.file.buffer)
@@ -21,10 +23,12 @@ const createTemplate = asyncErrorHandler(async (req, res, next) => {
     objUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${req.file.originalname}`;
   }
 
-  const newTemplate = await Templates.create({ ...req.body, image_url: objUrl });
+  const newTemplate = await Templates.create({ ...data, image_url: objUrl }, {
+    include: [{ model: Questions, as: 'questions' }]
+  });
   res.status(201).json({
     message: 'New template has been created successfully',
-    data: newTemplate
+    data: newTemplate,
   });
 })
 

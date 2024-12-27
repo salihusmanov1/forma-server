@@ -1,6 +1,6 @@
 const { Users } = require("../models")
 const bcrypt = require('bcryptjs');
-const generateAccessToken = require("../utils/jwtTokenGenerator");
+const { generateAccessToken, clearToken } = require("../utils/jwtTokenGenerator");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { validationResult } = require('express-validator');
@@ -39,7 +39,7 @@ const loginUser = asyncErrorHandler(async (req, res, next) => {
   }
   generateAccessToken(res, user.id)
   return res.status(200).json({
-    message: 'Login successful',
+    message: "You're logged in!",
     user: {
       id: user.id,
       name: user.name,
@@ -48,4 +48,9 @@ const loginUser = asyncErrorHandler(async (req, res, next) => {
   });
 })
 
-module.exports = { registerUser, loginUser };
+const logoutUser = (req, res, next) => {
+  clearToken(res)
+  return res.status(200).json({ message: "You'are logged out" });
+}
+
+module.exports = { registerUser, loginUser, logoutUser };

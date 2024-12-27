@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   )
   Questions.associate = (models) => {
     Questions.belongsTo(models.Templates, { foreignKey: "template_id" });
+    Questions.hasMany(models.Options, { foreignKey: "question_id", as: 'options' });
   };
   return Questions
 

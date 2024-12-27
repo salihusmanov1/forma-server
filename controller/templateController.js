@@ -1,8 +1,9 @@
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { Templates, Questions, Users } = require("../models");;
+const { Templates, Questions, Users, Options } = require("../models");;
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const s3 = require("../config/aws");
 const resizeTemlateImage = require("../utils/imageResizer");
+const CustomError = require("../utils/customError");
 
 const createTemplate = asyncErrorHandler(async (req, res, next) => {
   let data = req.body
@@ -24,7 +25,10 @@ const createTemplate = asyncErrorHandler(async (req, res, next) => {
   }
 
   const newTemplate = await Templates.create({ ...data, image_url: objUrl }, {
-    include: [{ model: Questions, as: 'questions' }]
+    include: [{
+      model: Questions, as: 'questions',
+      include: [{ model: Options, as: 'options' }]
+    }]
   });
   res.status(201).json({
     message: 'New template has been created successfully',
@@ -47,4 +51,21 @@ const getTemplates = asyncErrorHandler(async (req, res, next) => {
   })
 })
 
-module.exports = { createTemplate, getTemplates }
+const getTemplate = asyncErrorHandler(async (req, res, next) => {
+  const template = await Templates.findOne({
+    where: { id: req.params.id },
+    include: [{
+      model: Questions, as: 'questions',
+      include: [{ model: Options, as: 'options' }]
+    }]
+  });
+  if (!template) {
+    const error = new CustomError("Template not found!", 404)
+    return next(error)
+  }
+  res.status(200).json({
+    data: template,
+  })
+})
+
+module.exports = { createTemplate, getTemplates, getTemplate }

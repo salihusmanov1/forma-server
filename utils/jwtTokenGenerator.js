@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 
 const generateAccessToken = (res, userId) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "3d" });
-
   res.cookie('jwt', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
@@ -11,4 +10,11 @@ const generateAccessToken = (res, userId) => {
   })
 };
 
-module.exports = generateAccessToken
+const clearToken = (res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0)
+  });
+};
+
+module.exports = { generateAccessToken, clearToken }

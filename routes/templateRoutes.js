@@ -11,6 +11,6 @@ router.route("/templates")
   .get(getTemplates);
 
 router.route("/template/:id")
-  .get(protect, getTemplate)
+  .get(getTemplate)
 
 module.exports = router;

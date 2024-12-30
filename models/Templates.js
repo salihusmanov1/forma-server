@@ -56,6 +56,7 @@ module.exports = (sequelize, DataTypes) => {
   Templates.associate = (models) => {
     Templates.belongsTo(models.Users, { foreignKey: "author_id", as: 'author' });
     Templates.hasMany(models.Questions, { foreignKey: "template_id", as: "questions" });
+    Templates.hasMany(models.Forms, { foreignKey: "template_id" });
   };
 
   return Templates

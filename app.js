@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes')
 const templateRoutes = require('./routes/templateRoutes')
+const formRoutes = require('./routes/formRoutes')
 const db = require('./models');
 const CustomError = require('./utils/customError');
 const globalErrorController = require('./controller/errorController');
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use('/auth', authRoutes)
 app.use('/api', templateRoutes)
+app.use('/api', formRoutes)
 
 app.use((req, res, next) => {
   const error = new CustomError('Not Found', 404)

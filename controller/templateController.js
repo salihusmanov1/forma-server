@@ -52,6 +52,8 @@ const getTemplates = asyncErrorHandler(async (req, res, next) => {
 })
 
 const getTemplate = asyncErrorHandler(async (req, res, next) => {
+  console.log(req);
+
   const template = await Templates.findOne({
     where: { id: req.params.id },
     include: [{

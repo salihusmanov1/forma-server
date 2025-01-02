@@ -1,35 +1,49 @@
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { Templates, Questions, Users, Options } = require("../models");;
+const { Templates, Questions, Users, Options, Tags } = require("../models");;
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const s3 = require("../config/aws");
-const resizeTemlateImage = require("../utils/imageResizer");
+const resizeTemplateImage = require("../utils/imageResizer");
 const CustomError = require("../utils/customError");
+
+async function uploadTemplateImage(file) {
+  const buffer = await resizeTemplateImage(file.buffer);
+  const param = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: file.originalname,
+    Body: buffer,
+    ContentType: file.mimetype,
+  };
+  const command = new PutObjectCommand(param);
+  await s3.send(command);
+
+  return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${file.originalname}`;
+}
+
+async function createTags(template, tags) {
+  const tagInstances = await Promise.all(
+    tags.map((tag) => Tags.findOrCreate({ where: { name: tag.value } }))
+  );
+  const tagIds = tagInstances.map(([tag]) => tag.id);
+  await template.addTags(tagIds);
+}
 
 const createTemplate = asyncErrorHandler(async (req, res, next) => {
   let data = req.body
   data.questions = JSON.parse(req.body.questions);
+  data.tags = JSON.parse(req.body.tags)
 
   let objUrl = null;
   if (req.file) {
-    const buffer = await resizeTemlateImage(req.file.buffer)
-
-    const param = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: req.file.originalname,
-      Body: buffer,
-      ContentType: req.file.mimetype
-    }
-    const command = new PutObjectCommand(param)
-    await s3.send(command)
-    objUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${req.file.originalname}`;
+    objUrl = await uploadTemplateImage(req.file);
   }
-
   const newTemplate = await Templates.create({ ...data, image_url: objUrl }, {
     include: [{
       model: Questions, as: 'questions',
       include: [{ model: Options, as: 'options' }]
     }]
   });
+  await createTags(newTemplate, data.tags)
+
   res.status(201).json({
     message: 'New template has been created successfully',
     data: newTemplate,
@@ -52,14 +66,12 @@ const getTemplates = asyncErrorHandler(async (req, res, next) => {
 })
 
 const getTemplate = asyncErrorHandler(async (req, res, next) => {
-  console.log(req);
-
   const template = await Templates.findOne({
     where: { id: req.params.id },
     include: [{
       model: Questions, as: 'questions',
       include: [{ model: Options, as: 'options' }]
-    }]
+    }, { model: Tags, as: 'tags' }]
   });
   if (!template) {
     const error = new CustomError("Template not found!", 404)

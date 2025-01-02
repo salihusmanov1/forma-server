@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
+    is_public: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
   },
     {
       tableName: "Forms",
@@ -30,7 +35,11 @@ module.exports = (sequelize, DataTypes) => {
   )
   Forms.associate = (models) => {
     Forms.belongsTo(models.Templates, { foreignKey: "template_id", as: 'template' });
-    Forms.belongsTo(models.Users, { foreignKey: "user_id", as: "user" });
+    Forms.belongsTo(models.Users, { foreignKey: "user_id", as: "form" });
+    Forms.hasMany(models.AllowedUsers, {
+      foreignKey: "form_id",
+      as: "allowed_users",
+    });
   };
 
   return Forms

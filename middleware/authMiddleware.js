@@ -12,6 +12,7 @@ const protect = asyncErrorHandler(async (req, res, next) => {
   const user = await Users.findOne({ where: { id: decodedToken.userId } })
   if (!user)
     return next(new CustomError("User not found", 404))
+  req.user = user
   next()
 })
 

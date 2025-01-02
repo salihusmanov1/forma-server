@@ -3,6 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const util = require('node:util');
 const { Users } = require("../models")
+require('dotenv').config();
 
 const protect = asyncErrorHandler(async (req, res, next) => {
   const token = req.cookies.jwt

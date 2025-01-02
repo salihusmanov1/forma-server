@@ -4,6 +4,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const s3 = require("../config/aws");
 const resizeTemplateImage = require("../utils/imageResizer");
 const CustomError = require("../utils/customError");
+require('dotenv').config();
 
 async function uploadTemplateImage(file) {
   const buffer = await resizeTemplateImage(file.buffer);

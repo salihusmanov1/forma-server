@@ -1,4 +1,5 @@
 const CustomError = require("../utils/customError")
+require('dotenv').config();
 const createDevError = (error, res) => {
   res.status(error.statusCode).json({
     status: error.statusCode,

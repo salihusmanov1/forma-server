@@ -11,6 +11,7 @@ const topicsRoutes = require('./routes/topicsRoutes')
 const db = require('./models');
 const CustomError = require('./utils/customError');
 const globalErrorController = require('./controller/errorController');
+const { Forms, Users, AllowedUsers } = require('./models');
 require('dotenv').config();
 
 app.use(morgan('dev'))
@@ -29,6 +30,17 @@ app.use((req, res, next) => {
 })
 
 app.use(globalErrorController)
+
+  (async () => {
+    try {
+      await Forms.sync();
+      await Users.sync();
+      await AllowedUsers.sync();
+      console.log('Tables synced successfully');
+    } catch (error) {
+      console.error('Error syncing tables:', error);
+    }
+  })();
 
 db.sequelize.sync().then(() => {
   app.listen(process.env.PORT, () => {

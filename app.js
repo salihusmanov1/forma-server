@@ -30,21 +30,8 @@ app.use((req, res, next) => {
 
 app.use(globalErrorController)
 
-  (async () => {
-    try {
-      await db.sequelize.sync({ force: false });
-      await db.Forms.sync();
-      await db.Users.sync();
-      await db.Templates.sync();
-      await db.Questions.sync();
-      await db.Options.sync();
-      await db.AllowedUsers.sync();
-
-      app.listen(process.env.PORT, () => {
-        console.log(`Server is running on ${process.env.APP_URL}:${process.env.PORT}`);
-      });
-
-    } catch (error) {
-      console.error('Error syncing tables:', error);
-    }
-  })();
+db.sequelize.sync().then(() => {
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is running on ${process.env.APP_URL}:${process.env.PORT}`);
+  });
+}) 

@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "CASCADE"
     },
     user_email: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       references: {
         model: "users",
         key: "email"

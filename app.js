@@ -11,7 +11,7 @@ const topicsRoutes = require('./routes/topicsRoutes')
 const db = require('./models');
 const CustomError = require('./utils/customError');
 const globalErrorController = require('./controller/errorController');
-const { Forms, Users, AllowedUsers } = require('./models');
+const { Forms, Users, AllowedUsers, Templates, Questions, Options } = require('./models');
 require('dotenv').config();
 
 app.use(morgan('dev'))
@@ -35,8 +35,10 @@ app.use(globalErrorController)
     try {
       await Forms.sync();
       await Users.sync();
+      await Templates.sync();
+      await Questions.sync();
+      await Options.sync();
       await AllowedUsers.sync();
-      console.log('Tables synced successfully');
     } catch (error) {
       console.error('Error syncing tables:', error);
     }

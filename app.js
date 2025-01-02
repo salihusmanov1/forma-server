@@ -11,7 +11,6 @@ const topicsRoutes = require('./routes/topicsRoutes')
 const db = require('./models');
 const CustomError = require('./utils/customError');
 const globalErrorController = require('./controller/errorController');
-const { Forms, Users, AllowedUsers, Templates, Questions, Options } = require('./models');
 require('dotenv').config();
 
 app.use(morgan('dev'))
@@ -33,19 +32,19 @@ app.use(globalErrorController)
 
   (async () => {
     try {
-      await Forms.sync();
-      await Users.sync();
-      await Templates.sync();
-      await Questions.sync();
-      await Options.sync();
-      await AllowedUsers.sync();
+      await db.sequelize.sync({ force: false });
+      await db.Forms.sync();
+      await db.Users.sync();
+      await db.Templates.sync();
+      await db.Questions.sync();
+      await db.Options.sync();
+      await db.AllowedUsers.sync();
+
+      app.listen(process.env.PORT, () => {
+        console.log(`Server is running on ${process.env.APP_URL}:${process.env.PORT}`);
+      });
+
     } catch (error) {
       console.error('Error syncing tables:', error);
     }
   })();
-
-db.sequelize.sync().then(() => {
-  app.listen(process.env.PORT, () => {
-    console.log(`Server is running on ${process.env.APP_URL}:${process.env.PORT}`);
-  });
-}) 

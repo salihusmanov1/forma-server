@@ -39,11 +39,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     topic_id: {
-      validate: {
-        notEmpty: {
-          msg: "Template topic is required.",
-        },
-      },
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {

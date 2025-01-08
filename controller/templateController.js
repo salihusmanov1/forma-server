@@ -22,7 +22,7 @@ async function uploadTemplateImage(file) {
 
 async function createTags(template, tags) {
   const tagInstances = await Promise.all(
-    tags.map((tag) => Tags.findOrCreate({ where: { name: tag.value } }))
+    tags.map((tag) => Tags.findOrCreate({ where: { name: tag.name } }))
   );
   const tagIds = tagInstances.map(([tag]) => tag.id);
   await template.addTags(tagIds);

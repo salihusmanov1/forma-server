@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes')
 const templateRoutes = require('./routes/templateRoutes')
 const formRoutes = require('./routes/formRoutes')
 const topicsRoutes = require('./routes/topicsRoutes')
+const tagsRoutes = require('./routes/tagsRoutes')
 const responseRoutes = require('./routes/responseRoutes')
 const db = require('./models');
 const CustomError = require('./utils/customError');
@@ -23,6 +24,7 @@ app.use('/auth', authRoutes)
 app.use('/api', templateRoutes)
 app.use('/api', formRoutes)
 app.use('/api', topicsRoutes)
+app.use('/api', tagsRoutes)
 app.use('/api', responseRoutes)
 
 app.use((req, res, next) => {

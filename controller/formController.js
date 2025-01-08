@@ -1,5 +1,5 @@
 
-const { Forms, Templates, Questions, Options, AllowedUsers, Users } = require("../models");
+const { Forms, Templates, Questions, Options, AllowedUsers, Users, sequelize } = require("../models");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
 const createForm = asyncErrorHandler(async (req, res, next) => {
@@ -18,7 +18,15 @@ const getForm = asyncErrorHandler(async (req, res, next) => {
         model: Questions, as: 'questions',
         include: [{ model: Options, as: 'options' }]
       }]
-    }, { model: AllowedUsers, as: "allowed_users", attributes: ["user_email"] }]
+    }, { model: AllowedUsers, as: "allowed_users", attributes: ["user_email"] }],
+    order: [
+      [
+        { model: Templates, as: 'template' },
+        { model: Questions, as: 'questions' },
+        'order',
+        'ASC',
+      ],
+    ],
   });
   res.status(200).json({
     data: form,

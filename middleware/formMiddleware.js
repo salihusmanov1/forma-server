@@ -2,7 +2,7 @@ const { AllowedUsers, Forms } = require('../models');
 const asyncErrorHandler = require('../utils/asyncErrorHandler');
 const CustomError = require('../utils/customError');
 
-const checkFormResponseAccess = asyncErrorHandler(async (req, res, next) => {
+const checkFormAccess = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   const userEmail = req.user.email;
 
@@ -23,4 +23,4 @@ const checkFormResponseAccess = asyncErrorHandler(async (req, res, next) => {
   } else next()
 })
 
-module.exports = checkFormResponseAccess;
+module.exports = checkFormAccess;

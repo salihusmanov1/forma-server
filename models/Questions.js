@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
   Questions.associate = (models) => {
     Questions.belongsTo(models.Templates, { foreignKey: "template_id" });
     Questions.hasMany(models.Options, { foreignKey: "question_id", as: 'options' });
+    Questions.hasMany(models.SingleLineAnswers, { foreignKey: "response_id" });
+    Questions.hasMany(models.MultiLineAnswers, { foreignKey: "response_id" });
+    Questions.hasMany(models.NumericAnswers, { foreignKey: "response_id" });
+    Questions.hasMany(models.CheckboxAnswers, { foreignKey: "response_id" });
   };
   return Questions
 

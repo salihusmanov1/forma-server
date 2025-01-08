@@ -5,10 +5,13 @@ const generateAccessToken = (res, userId) => {
   res.cookie('jwt', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+    sameSite: "none",
     maxAge: 3 * 24 * 60 * 60 * 1000
   })
 };
+
+console.log(process.env.NODE_ENV !== "development");
+
 
 const clearToken = (res) => {
   res.cookie('jwt', '', {

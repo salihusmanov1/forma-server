@@ -33,6 +33,16 @@ const getForm = asyncErrorHandler(async (req, res, next) => {
   })
 })
 
+const getForms = asyncErrorHandler(async (req, res, next) => {
+  const forms = await Forms.findAll({
+    where:
+      { user_id: req.params.userId }
+  });
+  res.status(200).json({
+    data: forms,
+  })
+})
+
 const updateForm = asyncErrorHandler(async (req, res, next) => {
   await Forms.update({ is_public: req.body.is_public },
     { where: { id: req.params.id } })
@@ -41,6 +51,14 @@ const updateForm = asyncErrorHandler(async (req, res, next) => {
   res.status(200).json({
     message: "Form has been updated successfully",
   })
+})
+
+const removeForm = asyncErrorHandler(async (req, res, next) => {
+  await Forms.destroy({ where: { id: req.params.id } }),
+
+    res.status(200).json({
+      message: "Form has been deleted successfully",
+    })
 })
 
 const setAllowedUsers = async (req, res, next) => {
@@ -54,7 +72,6 @@ const setAllowedUsers = async (req, res, next) => {
   const usersToRemove = existingUserEmails.filter(
     email => !req.body.allowedEmails.some(obj => obj.user_email === email)
   );
-
 
   if (usersToAdd.length > 0) {
     await AllowedUsers.bulkCreate(
@@ -73,4 +90,6 @@ const setAllowedUsers = async (req, res, next) => {
   }
 }
 
-module.exports = { createForm, getForm, updateForm }
+
+
+module.exports = { createForm, getForm, getForms, updateForm, removeForm }

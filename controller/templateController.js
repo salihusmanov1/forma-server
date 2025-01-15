@@ -59,7 +59,10 @@ const getTemplates = asyncErrorHandler(async (req, res, next) => {
     include: [{
       model: Users,
       as: "author"
-    }]
+    }, {
+      model: Tags,
+      as: "tags"
+    },]
   })
   res.status(200).json({
     data: templates
@@ -83,4 +86,13 @@ const getTemplate = asyncErrorHandler(async (req, res, next) => {
   })
 })
 
-module.exports = { createTemplate, getTemplates, getTemplate }
+const getUserTemplates = asyncErrorHandler(async (req, res, next) => {
+  const templates = await Templates.findAll({
+    where: { author_id: req.params.userId },
+  });
+  res.status(200).json({
+    data: templates,
+  })
+})
+
+module.exports = { createTemplate, getTemplates, getTemplate, getUserTemplates }

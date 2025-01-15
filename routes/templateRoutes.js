@@ -1,5 +1,5 @@
 const express = require("express");
-const { createTemplate, getTemplates, getTemplate } = require("../controller/templateController");
+const { createTemplate, getTemplates, getTemplate, getUserTemplates } = require("../controller/templateController");
 const protect = require("../middleware/authMiddleware");
 const router = express.Router();
 const multer = require('multer');
@@ -12,5 +12,8 @@ router.route("/templates")
 
 router.route("/template/:id")
   .get(getTemplate)
+
+router.route("/templates/:userId")
+  .get(getUserTemplates)
 
 module.exports = router;

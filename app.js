@@ -10,6 +10,7 @@ const formRoutes = require('./routes/formRoutes')
 const topicsRoutes = require('./routes/topicsRoutes')
 const tagsRoutes = require('./routes/tagsRoutes')
 const responseRoutes = require('./routes/responseRoutes')
+const sfRoutes = require('./routes/sfRoutes')
 const db = require('./models');
 const CustomError = require('./utils/customError');
 const globalErrorController = require('./controller/errorController');
@@ -26,6 +27,7 @@ app.use('/api', formRoutes)
 app.use('/api', topicsRoutes)
 app.use('/api', tagsRoutes)
 app.use('/api', responseRoutes)
+app.use('/api', sfRoutes)
 
 app.use((req, res, next) => {
   const error = new CustomError('Not Found', 404)

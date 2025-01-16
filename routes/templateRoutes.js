@@ -1,5 +1,5 @@
 const express = require("express");
-const { createTemplate, getTemplates, getTemplate, getUserTemplates } = require("../controller/templateController");
+const { createTemplate, getTemplates, getTemplate, getUserTemplates, removeTemplate } = require("../controller/templateController");
 const protect = require("../middleware/authMiddleware");
 const router = express.Router();
 const multer = require('multer');
@@ -11,7 +11,8 @@ router.route("/templates")
   .get(getTemplates);
 
 router.route("/template/:id")
-  .get(getTemplate)
+  .get(protect, getTemplate)
+  .delete(protect, removeTemplate)
 
 router.route("/templates/:userId")
   .get(getUserTemplates)

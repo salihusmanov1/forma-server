@@ -95,4 +95,11 @@ const getUserTemplates = asyncErrorHandler(async (req, res, next) => {
   })
 })
 
-module.exports = { createTemplate, getTemplates, getTemplate, getUserTemplates }
+const removeTemplate = asyncErrorHandler(async (req, res, next) => {
+  await Templates.destroy({ where: { id: req.params.id } });
+  res.status(200).json({
+    message: "Template has been deleted successfully",
+  })
+})
+
+module.exports = { createTemplate, getTemplates, getTemplate, getUserTemplates, removeTemplate }

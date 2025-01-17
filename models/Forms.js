@@ -40,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "form_id",
       as: "allowed_users",
     });
+    Forms.hasMany(models.Responses, { foreignKey: "form_id", as: "responses" });
   };
 
   return Forms

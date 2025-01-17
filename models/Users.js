@@ -68,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
     Users.hasMany(models.Templates, { foreignKey: "author_id" });
     Users.hasMany(models.Forms, { foreignKey: "user_id", as: 'forms' });
     Users.hasMany(models.AllowedUsers, { foreignKey: "user_email" })
-    Users.hasMany(models.Responses, { foreignKey: "respondent_id" });
+    Users.hasMany(models.Responses, { foreignKey: "respondent_id", as: "respondent" });
   };
   return Users
 }

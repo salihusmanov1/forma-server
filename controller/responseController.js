@@ -4,22 +4,18 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 
 const createResponse = asyncErrorHandler(async (req, res, next) => {
-  req.body = {
-    ...req.body,
-    'single_line_answers': req.body.answers.filter(answer => answer.type === 'single_line'),
-    'multi_line_answers': req.body.answers.filter(answer => answer.type === 'multi_line'),
-    'numeric_answers': req.body.answers.filter(answer => answer.type === 'numeric'),
-    'checkbox_answers': req.body.answers.filter(answer => answer.type === 'checkbox')
+  const newResponse = await Responses.create(req.body)
+  for (const answer of req.body.answers) {
+    if (answer.type === 'single_line')
+      SingleLineAnswers.create({ ...answer, response_id: newResponse.id })
+    else if (answer.type === 'multi_line')
+      MultiLineAnswers.create({ ...answer, response_id: newResponse.id })
+    else if (answer.type === 'numeric')
+      NumericAnswers.create({ ...answer, response_id: newResponse.id })
+    else if (answer.type === 'checkbox')
+      for (const option of answer.options)
+        CheckboxAnswers.create({ ...option, question_id: answer.question_id, response_id: newResponse.id })
   }
-  const newResponse = await Responses.create(req.body,
-    {
-      include: [
-        { model: SingleLineAnswers, as: 'single_line_answers' },
-        { model: MultiLineAnswers, as: 'multi_line_answers' },
-        { model: NumericAnswers, as: 'numeric_answers' },
-        { model: CheckboxAnswers, as: 'checkbox_answers' },
-      ],
-    });
   res.status(201).json({
     message: 'Your response has been submitted successfully',
     data: newResponse,
@@ -30,52 +26,37 @@ const getResponse = asyncErrorHandler(async (req, res, next) => {
   const response = await Responses.findOne({
     where: req.params,
     include: [
-      { model: SingleLineAnswers, as: 'single_line_answers' },
-      { model: MultiLineAnswers, as: 'multi_line_answers' },
-      { model: NumericAnswers, as: 'numeric_answers' },
-      { model: CheckboxAnswers, as: 'checkbox_answers' },
+      { model: SingleLineAnswers, },
+      { model: MultiLineAnswers, },
+      { model: NumericAnswers, },
+      { model: CheckboxAnswers, },
     ],
   })
-  let data
-  if (response) {
-    data = {
-      id: response.id, form_id: response.form_id, respondent_id: response.respondent_id,
-      answers: [...response.single_line_answers,
-      ...response.multi_line_answers,
-      ...response.numeric_answers,
-      ...response.checkbox_answers]
-    }
-  } else {
-    data = null
-  }
-
   res.status(200).json({
-    data: data,
+    data: response,
   })
 })
 
 const updateResponse = asyncErrorHandler(async (req, res, next) => {
-
   const update = async (model, responseId, answers) => {
     const existingAnswers = await model.findAll({ where: { response_id: responseId } });
     if (existingAnswers.length) {
       await Promise.all(
         existingAnswers.map(async (answer) => {
           const found = answers.find((ans) =>
-            ans.question_id === answer.question_id &&
-            (!answer.option_id || ans.option_id === answer.option_id)
+            ans.question_id === answer.question_id
           );
           if (found) {
-            await answer.update(found);
+            if (found.options) {
+              const foundOption = found.options.find((ans) => ans.option_id === answer.option_id)
+              await answer.update(foundOption)
+            } else
+              await answer.update(found);
           }
         })
       );
-    } else {
-      if (answers.length)
-        await model.bulkCreate(answers)
     }
   };
-
   const { id } = req.params;
   const { answers } = req.body;
 

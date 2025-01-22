@@ -14,13 +14,13 @@
       "type": "node"
     },
     {
-      "type": "node",
-      "request": "launch",
       "name": "Launch Program",
+      "program": "${workspaceFolder}/app.js",
+      "request": "launch",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}\\controller\\templateController.js"
+      "type": "node"
     }
   ]
 }

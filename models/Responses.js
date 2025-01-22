@@ -32,10 +32,10 @@ module.exports = (sequelize, DataTypes) => {
   Responses.associate = (models) => {
     Responses.belongsTo(models.Users, { foreignKey: "respondent_id", as: 'respondent' });
     Responses.belongsTo(models.Forms, { foreignKey: "form_id", as: "response" });
-    Responses.hasMany(models.SingleLineAnswers, { foreignKey: "response_id", as: "single_line_answers" });
-    Responses.hasMany(models.MultiLineAnswers, { foreignKey: "response_id", as: "multi_line_answers" });
-    Responses.hasMany(models.NumericAnswers, { foreignKey: "response_id", as: "numeric_answers" });
-    Responses.hasMany(models.CheckboxAnswers, { foreignKey: "response_id", as: "checkbox_answers" });
+    Responses.hasMany(models.SingleLineAnswers, { foreignKey: "response_id", });
+    Responses.hasMany(models.MultiLineAnswers, { foreignKey: "response_id" });
+    Responses.hasMany(models.NumericAnswers, { foreignKey: "response_id" });
+    Responses.hasMany(models.CheckboxAnswers, { foreignKey: "response_id" });
   };
 
   return Responses

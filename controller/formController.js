@@ -1,5 +1,10 @@
 
-const { Forms, Templates, Questions, Options, AllowedUsers, Users, Responses } = require("../models");
+const { Forms, Templates,
+  Questions, Options,
+  AllowedUsers, Users,
+  Responses, SingleLineAnswers,
+  MultiLineAnswers, NumericAnswers,
+  CheckboxAnswers } = require("../models");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
 const createForm = asyncErrorHandler(async (req, res, next) => {
@@ -96,6 +101,56 @@ const setAllowedUsers = async (req, res, next) => {
   }
 }
 
+const getFormAnalytics = async (req, res, next) => {
+  const responses = await Responses.findAll({ where: { form_id: req.params.formId } })
+  const questions = await Questions.findAll({
+    where: { template_id: req.params.templateId },
+    include: [
+      {
+        model: SingleLineAnswers, attributes: ['answer'],
+        include: [{ model: Responses, where: { form_id: req.params.formId }, attributes: ["respondent_id"] }]
+      },
+      {
+        model: MultiLineAnswers,
+        attributes: ['answer'], include: [{ model: Responses, where: { form_id: req.params.formId }, attributes: ["respondent_id"] }]
+      },
+      {
+        model: NumericAnswers,
+        attributes: ['answer'], include: [{ model: Responses, where: { form_id: req.params.formId }, attributes: ["respondent_id"] }]
+      },
+      {
+        model: Options, as: 'options',
+        include: [
+          {
+            model: CheckboxAnswers, attributes: ['answer'],
+            include: { model: Responses, where: { form_id: req.params.formId }, attributes: ["respondent_id"] },
+          }
+        ]
+      }
+    ]
+  })
+
+  const data = questions.map(({ id, question, type, order, SingleLineAnswers, MultiLineAnswers, NumericAnswers, options }) => {
+    return {
+      id,
+      question,
+      type,
+      order,
+      answers: [
+        ...SingleLineAnswers,
+        ...MultiLineAnswers,
+        ...NumericAnswers,
+        ...(options?.map(option => ({
+          id: option.id,
+          name: option.name,
+          count: option.CheckboxAnswers.filter(answer => answer.answer === true).length
+        })))],
+    }
+  });
+
+  res.json({ questions: data, responsesCount: responses.length })
+}
 
 
-module.exports = { createForm, getForm, getForms, updateForm, removeForm }
+
+module.exports = { createForm, getForm, getForms, updateForm, removeForm, getFormAnalytics }

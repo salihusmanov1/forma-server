@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
   CheckboxAnswers.associate = (models) => {
     CheckboxAnswers.belongsTo(models.Responses, { foreignKey: "response_id" });
     CheckboxAnswers.belongsTo(models.Questions, { foreignKey: "question_id" });
-    CheckboxAnswers.belongsTo(models.Options, { foreignKey: "option_id" });
+    CheckboxAnswers.belongsTo(models.Options, { foreignKey: "option_id", as: 'option' });
   };
 
   return CheckboxAnswers

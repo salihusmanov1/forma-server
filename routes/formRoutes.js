@@ -1,5 +1,5 @@
 const express = require("express");
-const { createForm, getForm, updateForm, getForms, removeForm } = require("../controller/formController");
+const { createForm, getForm, updateForm, getForms, removeForm, getFormAnalytics } = require("../controller/formController");
 const protect = require("../middleware/authMiddleware");
 const router = express.Router();
 const checkFormAccess = require("../middleware/formMiddleware");
@@ -14,6 +14,9 @@ router.route("/form/:id")
 
 router.route("/forms/:userId")
   .get(protect, getForms)
+
+router.route("/form/:formId/template/:templateId/analytics")
+  .get(protect, getFormAnalytics)
 
 
 module.exports = router;

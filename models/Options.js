@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   )
   Options.associate = (models) => {
     Options.belongsTo(models.Questions, { foreignKey: "question_id" });
+    Options.hasMany(models.CheckboxAnswers, { foreignKey: "option_id" });
   };
   return Options
 

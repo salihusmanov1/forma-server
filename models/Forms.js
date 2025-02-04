@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'templates',
         key: 'id'
-      }
+      },
+      onDelete: "CASCADE"
     },
     user_id: {
       allowNull: false,
@@ -20,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'users',
         key: 'id'
-      }
+      },
+      onDelete: "CASCADE"
     },
     is_public: {
       allowNull: false,

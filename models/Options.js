@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         model: 'questions',
         key: 'id'
       },
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      onDelete: "CASCADE"
     },
     name: {
       allowNull: false,

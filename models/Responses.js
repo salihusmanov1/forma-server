@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: "forms",
         key: "id"
-      }
+      },
+      onDelete: "CASCADE"
     },
     respondent_id: {
       allowNull: false,
@@ -21,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: "users",
         key: "id"
-      }
+      },
+      onDelete: "CASCADE"
     },
   },
     {

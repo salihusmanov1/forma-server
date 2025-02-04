@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         model: "responses",
         key: "id"
       },
+      onDelete: "CASCADE"
     },
     question_id: {
       allowNull: false,
@@ -20,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: "questions",
         key: "id"
-      }
+      },
+      onDelete: "CASCADE"
     },
     answer: {
       allowNull: true,

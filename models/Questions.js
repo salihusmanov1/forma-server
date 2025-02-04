@@ -13,11 +13,13 @@ module.exports = (sequelize, DataTypes) => {
         model: "templates",
         key: "id"
       },
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      onDelete: "CASCADE"
     },
     question: {
       allowNull: false,
-      type: DataTypes.TEXT
+      type: DataTypes.TEXT,
+
     },
     order: {
       allowNull: false,

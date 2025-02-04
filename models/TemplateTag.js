@@ -11,14 +11,16 @@ module.exports = (sequelize, DataTypes) => {
         model: "templates",
         key: "id"
       },
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      onDelete: "CASCADE"
     },
     tag_id: {
       references: {
         model: "tags",
         key: "id"
       },
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      onDelete: "CASCADE"
     }
 
   },

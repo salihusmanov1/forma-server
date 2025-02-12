@@ -62,7 +62,7 @@ const getTemplates = asyncErrorHandler(async (req, res, next) => {
         Sequelize.literal(`(
           SELECT COUNT(*) 
           FROM forms 
-          WHERE forms.template_id = templates.id
+          WHERE forms.template_id = Templates.id
         )`),
         'formCount']
       ]

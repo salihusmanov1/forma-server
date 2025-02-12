@@ -12,7 +12,7 @@ const protect = asyncErrorHandler(async (req, res, next) => {
   const decodedToken = await util.promisify(jwt.verify)(token, process.env.JWT_SECRET)
   const user = await Users.findOne({ where: { id: decodedToken.userId } })
   if (!user)
-    return next(new CustomError("User not found", 404))
+    return next(new CustomError("User not found", 401))
   req.user = user
   next()
 })

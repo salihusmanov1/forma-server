@@ -1,24 +1,25 @@
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { Templates, Questions, Users, Options, Tags } = require("../models");;
+const { Templates, Forms, Questions, Users, Options, Tags } = require("../models");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const s3 = require("../config/aws");
 const resizeTemplateImage = require("../utils/imageResizer");
 const CustomError = require("../utils/customError");
+const { Sequelize } = require("sequelize");
 require('dotenv').config();
 
-async function uploadTemplateImage(file) {
-  const buffer = await resizeTemplateImage(file.buffer);
-  const param = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: file.originalname,
-    Body: buffer,
-    ContentType: file.mimetype,
-  };
-  const command = new PutObjectCommand(param);
-  await s3.send(command);
+// async function uploadTemplateImage(file) {
+//   const buffer = await resizeTemplateImage(file.buffer);
+//   const param = {
+//     Bucket: process.env.AWS_BUCKET_NAME,
+//     Key: file.originalname,
+//     Body: buffer,
+//     ContentType: file.mimetype,
+//   };
+//   const command = new PutObjectCommand(param);
+//   await s3.send(command);
 
-  return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${file.originalname}`;
-}
+//   return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${file.originalname}`;
+// }
 
 async function createTags(template, tags) {
   const tagInstances = await Promise.all(
@@ -34,9 +35,9 @@ const createTemplate = asyncErrorHandler(async (req, res, next) => {
   data.tags = JSON.parse(req.body.tags)
 
   let objUrl = null;
-  if (req.file) {
-    objUrl = await uploadTemplateImage(req.file);
-  }
+  // if (req.file) {
+  //   objUrl = await uploadTemplateImage(req.file);
+  // }
   const newTemplate = await Templates.create({ ...data, image_url: objUrl }, {
     include: [{
       model: Questions, as: 'questions',
@@ -56,13 +57,24 @@ const getTemplates = asyncErrorHandler(async (req, res, next) => {
     order: [
       ['createdAt', 'DESC'],
     ],
+    attributes: {
+      include: [[
+        Sequelize.literal(`(
+          SELECT COUNT(*) 
+          FROM forms 
+          WHERE forms.template_id = templates.id
+        )`),
+        'formCount']
+      ]
+    },
     include: [{
       model: Users,
-      as: "author"
+      as: "author",
+      attributes: ['name', 'email']
     }, {
       model: Tags,
       as: "tags"
-    },]
+    }]
   })
   res.status(200).json({
     data: templates
